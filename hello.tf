@@ -24,8 +24,10 @@ resource "aws_iam_role" "sample_iam_role" {
   assume_role_policy = jsonencode({
     Version = "2024-05-14"
     Statement = [
-      actions = ["ecs:RunTask"]
-      resource = ["*"]
+      {
+        actions = ["ecs:RunTask"]
+        resource = ["*"]
+      },
     ]
   })
 }
