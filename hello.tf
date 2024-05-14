@@ -28,11 +28,16 @@ data "aws_iam_policy_document" "sample_iam_role_document" {
   }
 }
 
-
 resource "aws_iam_role" "sample_iam_role" {
   name = "sample_iam_role"
 
   assume_role_policy = data.aws_iam_policy_document.sample_iam_role_document.json 
+}
+
+resource "aws_iam_role_policy" "sample_iam_role_policy" {
+  name = "sample_iam_role_policy"
+  role = aws_iam_role.sample_iam_role.id
+  policy = data.aws_iam_policy_document.sample_iam_role_document.json
 }
 
 resource "aws_ecs_cluster" "sample_ecs_cluster" {
