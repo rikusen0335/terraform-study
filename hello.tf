@@ -24,7 +24,7 @@ data "aws_iam_policy_document" "sample_iam_role_document" {
     actions = [
       "ecs:RunTask",
     ]
-    resources = ["*"]
+    resources = ["sts:AssumeRole"]
   }
 }
 
