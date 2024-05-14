@@ -21,10 +21,13 @@ provider "aws" {
 resource "aws_iam_role" "sample_iam_role" {
   name = "sample_iam_role"
 
-  statement {
-    actions = ["ecs:RunTask"]
-    resource = ["*"]
-  }
+  assume_role_policy = jsonencode({
+    Version = "2024-05-14"
+    Statement = [
+      actions = ["ecs:RunTask"]
+      resource = ["*"]
+    ]
+  })
 }
 
 resource "aws_ecs_cluster" "sample_ecs_cluster" {
