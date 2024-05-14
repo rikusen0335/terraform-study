@@ -18,18 +18,21 @@ provider "aws" {
   # }
 }
 
+data "aws_iam_policy_document" "sample_iam_role_document" {
+  version = "2012-10-17" 
+  statement {
+    actions = [
+      "ecs:RunTask",
+    ]
+    resources = ["*"]
+  }
+}
+
+
 resource "aws_iam_role" "sample_iam_role" {
   name = "sample_iam_role"
 
-  assume_role_policy = jsonencode({
-    Version = "2024-05-14"
-    Statement = [
-      {
-        actions = ["ecs:RunTask"]
-        resource = ["*"]
-      },
-    ]
-  })
+  assume_role_policy = data.aws_iam_policy_document.sample_iam_role_document.json 
 }
 
 resource "aws_ecs_cluster" "sample_ecs_cluster" {
@@ -42,6 +45,7 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
     {
       name = "nginx"
       image = "nginx:latest"
+      network_mode = "aws_vpc"
       requires_compatibilities = ["FARGATE"]
       cpu = 1
       memory = 256
