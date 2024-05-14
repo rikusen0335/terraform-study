@@ -31,7 +31,19 @@ data "aws_iam_policy_document" "sample_iam_role_document" {
 resource "aws_iam_role" "sample_iam_role" {
   name = "sample_iam_role"
 
-  assume_role_policy = data.aws_iam_policy_document.sample_iam_role_document.json 
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Effect = "Allow"
+        Sid = ""
+      }
+    ]
+  }) 
 }
 
 resource "aws_iam_role_policy" "sample_iam_role_policy" {
@@ -50,7 +62,7 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
     {
       name = "nginx"
       image = "nginx:latest"
-      network_mode = "aws_vpc"
+      network_mode = "awsvpc"
       requires_compatibilities = ["FARGATE"]
       cpu = 1
       memory = 256
