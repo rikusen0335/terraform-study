@@ -26,14 +26,14 @@ resource "aws_iam_role" "sample_iam_role" {
     Statement = [
       {
         Action = "sts:AssumeRole"
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
         Effect = "Allow"
-        Sid = ""
-      }
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
     ]
-  }) 
+  })
 }
 
 resource "aws_iam_role_policy" "sample_iam_role_policy" {
