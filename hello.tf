@@ -41,7 +41,7 @@ resource "aws_iam_role_policy" "sample_iam_role_policy" {
   role = aws_iam_role.sample_iam_role.id
   policy = jsonencode({
     Version = "2012-10-17" 
-    Statemen = [
+    Statement = [
       {
         Action = [
           "ecs:RunTask",
