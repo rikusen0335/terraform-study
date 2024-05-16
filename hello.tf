@@ -107,10 +107,34 @@ resource "aws_internet_gateway" "internet_gateway" {
   }
 }
 
+resource "aws_security_group" "sample_security_group" {
+  name   = "ecs-security-group"
+  vpc_id = aws_vpc.sample.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = -1
+    self        = "false"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "any"
+  }
+
+
+
+  egress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_lb" "sample_lb" {
   name               = "sample-lb"
   internal           = false
   load_balancer_type = "network"
+  security_groups = [aws_security_group.sample_security_group]
 
   subnets = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
 }
