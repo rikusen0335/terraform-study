@@ -78,7 +78,7 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
   ])
 }
 
-resource "aws_vpc" "example" {
+resource "aws_vpc" "sample" {
   cidr_block = "10.0.0.0/16"
 }
 
@@ -86,8 +86,24 @@ output "aws_vpc_id" {
   value = aws_vpc.example.id
 }
 
+resource "aws_subnet" "subnet" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = cidrsubnet(aws_vpc.sample.cidr_block, 8, 1)
+  map_public_ip_on_launch = true
+  availability_zone       = "us-east-1a"
+}
+
+resource "aws_internet_gateway" "internet_gateway" {
+  vpc_id = aws_vpc.sample.id
+  tags = {
+    Name = "internet_gateway"
+  }
+}
+
 resource "aws_lb" "sample_lb" {
-  name               = "sample_lb"
+  name               = "sample-lb"
   internal           = false
   load_balancer_type = "network"
+
+  subnets = [for subnet in aws_subnet.public : subnet.id]
 }
