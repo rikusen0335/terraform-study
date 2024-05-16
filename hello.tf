@@ -18,16 +18,6 @@ provider "aws" {
   # }
 }
 
-data "aws_iam_policy_document" "sample_iam_role_document" {
-  version = "2012-10-17" 
-  statement {
-    actions = [
-      "ecs:RunTask",
-    ]
-    resources = ["sts:AssumeRole"]
-  }
-}
-
 resource "aws_iam_role" "sample_iam_role" {
   name = "sample_iam_role"
 
@@ -37,7 +27,7 @@ resource "aws_iam_role" "sample_iam_role" {
       {
         Action = "sts:AssumeRole"
         Principal = {
-          Service = "ec2.amazonaws.com"
+          Service = "ecs-tasks.amazonaws.com"
         }
         Effect = "Allow"
         Sid = ""
@@ -49,7 +39,17 @@ resource "aws_iam_role" "sample_iam_role" {
 resource "aws_iam_role_policy" "sample_iam_role_policy" {
   name = "sample_iam_role_policy"
   role = aws_iam_role.sample_iam_role.id
-  policy = data.aws_iam_policy_document.sample_iam_role_document.json
+  policy = jsonencode({
+    Version = "2012-10-17" 
+    Statemen = [
+      {
+        Action = [
+          "ecs:RunTask",
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 resource "aws_ecs_cluster" "sample_ecs_cluster" {
