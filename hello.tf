@@ -93,6 +93,13 @@ resource "aws_subnet" "subnet" {
   availability_zone       = "us-east-1a"
 }
 
+resource "aws_subnet" "subnet2" {
+  vpc_id                  = aws_vpc.sample.id
+  cidr_block              = cidrsubnet(aws_vpc.sample.cidr_block, 8, 2)
+  map_public_ip_on_launch = true
+  availability_zone       = "us-east-1b"
+}
+
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.sample.id
   tags = {
@@ -105,5 +112,5 @@ resource "aws_lb" "sample_lb" {
   internal           = false
   load_balancer_type = "network"
 
-  subnets = [for subnet in aws_subnet.public : subnet.id]
+  subnets = [aws_subnet.subnet, aws_subnet.subnet2]
 }
