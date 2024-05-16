@@ -87,7 +87,7 @@ output "aws_vpc_id" {
 }
 
 resource "aws_subnet" "subnet" {
-  vpc_id                  = aws_vpc.main.id
+  vpc_id                  = aws_vpc.sample.id
   cidr_block              = cidrsubnet(aws_vpc.sample.cidr_block, 8, 1)
   map_public_ip_on_launch = true
   availability_zone       = "us-east-1a"
