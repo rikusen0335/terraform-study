@@ -134,7 +134,7 @@ resource "aws_lb" "sample_lb" {
   name               = "sample-lb"
   internal           = false
   load_balancer_type = "network"
-  security_groups = [aws_security_group.sample_security_group]
+  security_groups = [aws_security_group.sample_security_group.id]
 
   subnets = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
 }
