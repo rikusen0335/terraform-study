@@ -83,7 +83,7 @@ resource "aws_vpc" "sample" {
 }
 
 output "aws_vpc_id" {
-  value = aws_vpc.example.id
+  value = aws_vpc.sample.id
 }
 
 resource "aws_subnet" "subnet" {
