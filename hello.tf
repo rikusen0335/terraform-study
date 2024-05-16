@@ -112,5 +112,5 @@ resource "aws_lb" "sample_lb" {
   internal           = false
   load_balancer_type = "network"
 
-  subnets = [aws_subnet.subnet, aws_subnet.subnet2]
+  subnets = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
 }
