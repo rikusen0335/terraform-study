@@ -78,11 +78,16 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
   ])
 }
 
-# Create a VPC
 resource "aws_vpc" "example" {
   cidr_block = "10.0.0.0/16"
 }
 
 output "aws_vpc_id" {
   value = aws_vpc.example.id
+}
+
+resource "aws_lb" "sample_lb" {
+  name               = "sample_lb"
+  internal           = false
+  load_balancer_type = "network"
 }
