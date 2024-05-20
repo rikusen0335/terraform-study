@@ -120,8 +120,6 @@ resource "aws_security_group" "sample_security_group" {
     description = "any"
   }
 
-
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -133,8 +131,12 @@ resource "aws_security_group" "sample_security_group" {
 resource "aws_lb" "sample_lb" {
   name               = "sample-lb"
   internal           = false
-  load_balancer_type = "network"
+  load_balancer_type = "application"
   security_groups = [aws_security_group.sample_security_group.id]
 
   subnets = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+}
+
+output "aws_lb_dns_name" {
+  value = aws_lb.sample_lb.dns_name
 }
