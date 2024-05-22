@@ -115,6 +115,16 @@ resource "aws_route_table" "alb_route_table" {
   }
 }
 
+resource "aws_route_table_association" "alb_table_association_1a" {
+  subnet_id      = aws_subnet.subnet.id
+  route_table_id = aws_route_table.alb_route_table.id
+}
+
+resource "aws_route_table_association" "alb_table_association_1c" {
+  subnet_id      = aws_subnet.subnet2.id
+  route_table_id = aws_route_table.alb_route_table.id
+}
+
 resource "aws_security_group" "sample_security_group" {
   name   = "ecs-security-group"
   vpc_id = aws_vpc.sample.id
