@@ -107,6 +107,14 @@ resource "aws_internet_gateway" "internet_gateway" {
   }
 }
 
+resource "aws_route_table" "alb_route_table" {
+  vpc_id = aws_vpc.sample.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.internet_gateway.id
+  }
+}
+
 resource "aws_security_group" "sample_security_group" {
   name   = "ecs-security-group"
   vpc_id = aws_vpc.sample.id
