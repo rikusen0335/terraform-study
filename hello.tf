@@ -60,13 +60,17 @@ resource "aws_ecs_cluster" "sample_ecs_cluster" {
 
 resource "aws_ecs_task_definition" "sample_ecs_task" {
   family = "sample_ecs_cluster"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = 256
+  memory                   = 512
+  network_mode             = "awsvpc"
   container_definitions = jsonencode([
     {
       name = "nginx"
       image = "nginx:latest"
       network_mode = "awsvpc"
       requires_compatibilities = ["FARGATE"]
-      cpu = 1
+      cpu = 256
       memory = 256
       portMappings = [
         {
