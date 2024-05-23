@@ -78,28 +78,6 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
   ])
 }
 
-### EIP ###
-resource "aws_eip" "eip_1" {
-}
-
-resource "aws_eip" "eip_2" {
-}
-
-## NatGateway ###
-resource "aws_nat_gateway" "nat_gateway_1" {
-  allocation_id = aws_eip.eip_1.id
-  subnet_id     = aws_subnet.public1.id
-
-  depends_on = [aws_internet_gateway.internet_gateway]
-}
-
-resource "aws_nat_gateway" "nat_gateway_2" {
-  allocation_id = aws_eip.eip_2.id
-  subnet_id     = aws_subnet.public2.id
-
-  depends_on = [aws_internet_gateway.internet_gateway]
-}
-
 resource "aws_vpc" "sample" {
   cidr_block = "10.1.0.0/16"
   enable_dns_support   = true
