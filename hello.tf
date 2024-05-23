@@ -77,7 +77,6 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
     }
   ])
 }
-
 resource "aws_vpc" "sample" {
   cidr_block = "10.1.0.0/16"
   enable_dns_support   = true
@@ -111,13 +110,17 @@ resource "aws_internet_gateway" "internet_gateway" {
 
 resource "aws_route_table" "alb_route_table" {
   vpc_id = aws_vpc.sample.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.internet_gateway.id
+  }
 }
 
-resource "aws_route" "public-route" {
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.internet_gateway.id
-  route_table_id         = aws_route_table.alb_route_table.id
-}
+# resource "aws_route" "public-route" {
+#   destination_cidr_block = "0.0.0.0/0"
+#   gateway_id             = aws_internet_gateway.internet_gateway.id
+#   route_table_id         = aws_route_table.alb_route_table.id
+# }
 
 resource "aws_route_table_association" "alb_table_association_1a" {
   subnet_id      = aws_subnet.public1.id
