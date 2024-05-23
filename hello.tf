@@ -204,6 +204,16 @@ resource "aws_lb" "sample_lb" {
   subnets = [aws_subnet.public1.id, aws_subnet.public2.id]
 }
 
+resource "aws_lb_listener" "test_listener" {
+  load_balancer_arn = aws_lb.sample_lb.arn
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.sample.arn
+  }
+}
+
 output "aws_lb_dns_name" {
   value = aws_lb.sample_lb.dns_name
 }
