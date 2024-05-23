@@ -77,27 +77,55 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
     }
   ])
 }
-resource "aws_vpc" "sample" {
-  cidr_block = "10.1.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
+
+resource "aws_ecs_service" "service" {
+  name          = "ecs_service"
+  cluster       = aws_ecs_cluster.sample_ecs_cluster.id
+  desired_count = 1
+  launch_type   = "FARGATE"
+  
+  network_configuration {
+    subnets = [
+      aws_subnet.public1,
+      aws_subnet.public2
+    ]
+    security_groups  = [aws_security_group.app_sg.id]
+    assign_public_ip = true
+  }
+
+  load_balancer {
+    container_name   = "nginx"
+    container_port   = "80"
+  }
+
+  task_definition = aws_ecs_task_definition.sample_ecs_task.arn
+
+  lifecycle {
+    ignore_changes = [
+      task_definition,
+      desired_count,
+    ]
+  }
 }
 
-output "aws_vpc_id" {
-  value = aws_vpc.sample.id
+resource "aws_vpc" "sample" {
+  cidr_block = "10.10.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
+  instance_tenancy     = "default"
 }
 
 resource "aws_subnet" "public1" {
   vpc_id                  = aws_vpc.sample.id
-  cidr_block              = cidrsubnet(aws_vpc.sample.cidr_block, 8, 1)
-  map_public_ip_on_launch = true
+  cidr_block              = "10.10.1.0/24"
+  map_public_ip_on_launch = false
   availability_zone       = "us-east-1a"
 }
 
 resource "aws_subnet" "public2" {
   vpc_id                  = aws_vpc.sample.id
-  cidr_block              = cidrsubnet(aws_vpc.sample.cidr_block, 8, 2)
-  map_public_ip_on_launch = true
+  cidr_block              = "10.10.2.0/24"
+  map_public_ip_on_launch = false
   availability_zone       = "us-east-1b"
 }
 
