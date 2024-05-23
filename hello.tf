@@ -83,13 +83,13 @@ resource "aws_ecs_service" "service" {
   cluster       = aws_ecs_cluster.sample_ecs_cluster.id
   desired_count = 1
   launch_type   = "FARGATE"
-  
+
   network_configuration {
     subnets = [
       aws_subnet.public1,
       aws_subnet.public2
     ]
-    security_groups  = [aws_security_group.app_sg.id]
+    security_groups  = [aws_security_group.sample_security_group.id]
     assign_public_ip = true
   }
 
