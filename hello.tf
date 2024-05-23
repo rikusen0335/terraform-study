@@ -94,6 +94,7 @@ resource "aws_ecs_service" "service" {
   }
 
   load_balancer {
+    target_group_arn = aws_lb_target_group.sample.arn
     container_name   = "nginx"
     container_port   = "80"
   }
@@ -180,6 +181,15 @@ resource "aws_security_group" "sample_security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_lb_target_group" "sample" {
+  name        = "nginx_lb"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.sample.id
+  target_type = "ip"
+}
+
 
 resource "aws_lb" "sample_lb" {
   name               = "sample-lb"
