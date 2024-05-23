@@ -78,22 +78,46 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
   ])
 }
 
+### EIP ###
+resource "aws_eip" "eip_1" {
+}
+
+resource "aws_eip" "eip_2" {
+}
+
+## NatGateway ###
+resource "aws_nat_gateway" "nat_gateway_1" {
+  allocation_id = aws_eip.eip_1.id
+  subnet_id     = aws_subnet.public1.id
+
+  depends_on = [aws_internet_gateway.internet_gateway]
+}
+
+resource "aws_nat_gateway" "nat_gateway_2" {
+  allocation_id = aws_eip.eip_2.id
+  subnet_id     = aws_subnet.public2.id
+
+  depends_on = [aws_internet_gateway.internet_gateway]
+}
+
 resource "aws_vpc" "sample" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "10.1.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 }
 
 output "aws_vpc_id" {
   value = aws_vpc.sample.id
 }
 
-resource "aws_subnet" "subnet" {
+resource "aws_subnet" "public1" {
   vpc_id                  = aws_vpc.sample.id
   cidr_block              = cidrsubnet(aws_vpc.sample.cidr_block, 8, 1)
   map_public_ip_on_launch = true
   availability_zone       = "us-east-1a"
 }
 
-resource "aws_subnet" "subnet2" {
+resource "aws_subnet" "public2" {
   vpc_id                  = aws_vpc.sample.id
   cidr_block              = cidrsubnet(aws_vpc.sample.cidr_block, 8, 2)
   map_public_ip_on_launch = true
@@ -115,13 +139,19 @@ resource "aws_route_table" "alb_route_table" {
   }
 }
 
+resource "aws_route" "public-route" {
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.internet_gateway.id
+  route_table_id         = aws_route_table.alb_route_table.id
+}
+
 resource "aws_route_table_association" "alb_table_association_1a" {
-  subnet_id      = aws_subnet.subnet.id
+  subnet_id      = aws_subnet.public1.id
   route_table_id = aws_route_table.alb_route_table.id
 }
 
 resource "aws_route_table_association" "alb_table_association_1c" {
-  subnet_id      = aws_subnet.subnet2.id
+  subnet_id      = aws_subnet.public2.id
   route_table_id = aws_route_table.alb_route_table.id
 }
 
@@ -152,7 +182,7 @@ resource "aws_lb" "sample_lb" {
   load_balancer_type = "application"
   security_groups = [aws_security_group.sample_security_group.id]
 
-  subnets = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
+  subnets = [aws_subnet.public1.id, aws_subnet.public2.id]
 }
 
 output "aws_lb_dns_name" {
