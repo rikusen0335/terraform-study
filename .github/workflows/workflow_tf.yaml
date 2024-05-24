@@ -32,5 +32,5 @@ jobs:
         run: terraform init
       - name: Terraform fmt
         run: terraform fmt
-      - plan: Terraform plan
+      - name: Terraform plan
         run: terraform plan -no-color
