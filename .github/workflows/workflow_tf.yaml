@@ -1,0 +1,36 @@
+name: workflow terraform
+
+on:
+  push:
+    paths:
+      - terraform/*
+
+env:
+  TF_VERSION: 1.5.7
+  AWS_REGION: us-east-1
+jobs:
+  terraform:
+    name: terraform
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        workdir: [terraform/main, terraform/network]
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: terraform setup
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ matrix.TF_VERSION }}
+      - name: init
+        run: terraform init
+      - name: Terraform fmt
+        run: terraform fmt
+      - plan: Terraform plan
+        run: terraform plan -no-color
