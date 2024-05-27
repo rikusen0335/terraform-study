@@ -4,7 +4,7 @@ variable "github_repo" {}
 
 resource "aws_iam_role" "github_actions" {
   name = "${terraform.workspace}-github-actions"
-  assume_role_policy = templatefile("./assume_role.json",
+  assume_role_policy = templatefile("./terraform/modules/github_actions/assume_role.json",
     {
       account_id  = var.account_id,
       github_org  = var.github_org,
