@@ -19,7 +19,7 @@ provider "aws" {
 }
 
 module "iam_role_github_actions" {
-  source = "./modules/github_actions"
+  source = "./terraform/modules/github_actions"
 
   project_name = local.project_name
   account_id   = data.aws_caller_identity.current.account_id
