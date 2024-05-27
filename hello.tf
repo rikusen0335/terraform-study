@@ -21,10 +21,10 @@ provider "aws" {
 module "iam_role_github_actions" {
   source = "./terraform/modules/github_actions"
 
-  project_name = local.project_name
+  project_name = "terraform-study"
   account_id   = data.aws_caller_identity.current.account_id
-  github_org   = local.github_org
-  github_repo  = local.github_repo
+  github_org   = "rikusen0335"
+  github_repo  = "terraform-study"
 }
 
 resource "aws_iam_role" "sample_iam_role" {
