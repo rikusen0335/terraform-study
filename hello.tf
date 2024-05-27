@@ -18,10 +18,11 @@ provider "aws" {
   # }
 }
 
+data "aws_caller_identity" "current" {}
+
 module "iam_role_github_actions" {
   source = "./terraform/modules/github_actions"
 
-  project_name = "terraform-study"
   account_id   = data.aws_caller_identity.current.account_id
   github_org   = "rikusen0335"
   github_repo  = "terraform-study"

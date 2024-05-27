@@ -1,10 +1,9 @@
-variable "project_name" {}
 variable "account_id" {}
 variable "github_org" {}
 variable "github_repo" {}
 
 resource "aws_iam_role" "github_actions" {
-  name = "${terraform.workspace}-${var.project_name}-github-actions"
+  name = "${terraform.workspace}-github-actions"
   assume_role_policy = templatefile("./assume_role.json",
     {
       account_id  = var.account_id,
@@ -15,7 +14,7 @@ resource "aws_iam_role" "github_actions" {
 }
 
 resource "aws_iam_policy" "github_actions" {
-  name   = "${terraform.workspace}-${var.project_name}-github-actions"
+  name   = "${terraform.workspace}-github-actions"
   policy = templatefile("./administrator.json", {})
 }
 
