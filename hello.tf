@@ -122,7 +122,7 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
   network_mode             = "awsvpc"
   container_definitions = jsonencode([
     {
-      name = "var.repository_name"
+      name = var.repository_name
       image = "${module.nginx_repository.repository_url}:latest"
       network_mode = "awsvpc"
       requires_compatibilities = ["FARGATE"]
@@ -156,7 +156,7 @@ resource "aws_ecs_service" "service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.sample.arn
-    container_name   = "var.repository_name"
+    container_name   = var.repository_name
     container_port   = "80"
   }
 
