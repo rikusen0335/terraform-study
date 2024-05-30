@@ -63,6 +63,10 @@ resource "aws_iam_role_policy" "sample_iam_role_policy" {
       {
         Action = [
           "ecs:RunTask",
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
         ]
         Effect = "Allow"
         Resource = "*"
