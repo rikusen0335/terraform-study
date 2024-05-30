@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: us-east-1                  # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: sample-repository          # set this to your Amazon ECR repository name
+  ECR_REPOSITORY: nginx-repository          # set this to your Amazon ECR repository name
   ECS_SERVICE: ecs_service               # set this to your Amazon ECS service name
   ECS_CLUSTER: sample_ecs_cluster                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: sample_ecs_task        # タスク定義名
