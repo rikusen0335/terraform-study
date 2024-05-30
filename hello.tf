@@ -114,7 +114,7 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
   container_definitions = jsonencode([
     {
       name = "nginx"
-      image = "nginx:latest"
+      image = "${module.nginx_repository.repository_url}:latest"
       network_mode = "awsvpc"
       requires_compatibilities = ["FARGATE"]
       cpu = 256
