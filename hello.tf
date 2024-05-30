@@ -131,6 +131,7 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
       ]
     }
   ])
+  execution_role_arn = aws_iam_role.sample_iam_role.arn
 }
 
 resource "aws_ecs_service" "service" {
