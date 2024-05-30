@@ -18,6 +18,13 @@ provider "aws" {
   # }
 }
 
+variable "common_tags" {
+  type = map(string)
+  default = {
+    Terraform = "true"
+  }
+}
+
 data "aws_caller_identity" "current" {}
 
 module "iam_role_github_actions" {
@@ -64,12 +71,42 @@ resource "aws_iam_role_policy" "sample_iam_role_policy" {
   })
 }
 
+module "nginx_repository" {
+  source  = "terraform-aws-modules/ecr/aws"
+  version = "1.6.0"
+
+  repository_name                 = "nginx-repository"
+  repository_type                 = "private"
+  repository_image_tag_mutability = "IMMUTABLE"
+  create_lifecycle_policy         = true
+
+  # 最新の3イメージのみを保持
+  repository_lifecycle_policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1
+        description  = "Expire images by count"
+        selection = {
+          tagStatus   = "any"
+          countType   = "imageCountMoreThan"
+          countNumber = 3
+        }
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+
+  tags = merge(var.common_tags)
+}
+
 resource "aws_ecs_cluster" "sample_ecs_cluster" {
   name = "sample_ecs_cluster" 
 }
 
 resource "aws_ecs_task_definition" "sample_ecs_task" {
-  family = "sample_ecs_cluster"
+  family = "sample_ecs_task"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 256
   memory                   = 512
