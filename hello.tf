@@ -25,6 +25,11 @@ variable "common_tags" {
   }
 }
 
+variable "repository_name" {
+  type = string
+  default = "nginx-repository"
+}
+
 data "aws_caller_identity" "current" {}
 
 module "iam_role_github_actions" {
@@ -79,7 +84,7 @@ module "nginx_repository" {
   source  = "terraform-aws-modules/ecr/aws"
   version = "1.6.0"
 
-  repository_name                 = "nginx-repository"
+  repository_name                 = var.repository_name
   repository_type                 = "private"
   repository_image_tag_mutability = "MUTABLE"
   create_lifecycle_policy         = true
@@ -117,7 +122,7 @@ resource "aws_ecs_task_definition" "sample_ecs_task" {
   network_mode             = "awsvpc"
   container_definitions = jsonencode([
     {
-      name = "nginx-repository"
+      name = "var.repository_name"
       image = "${module.nginx_repository.repository_url}:latest"
       network_mode = "awsvpc"
       requires_compatibilities = ["FARGATE"]
@@ -151,7 +156,7 @@ resource "aws_ecs_service" "service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.sample.arn
-    container_name   = "nginx"
+    container_name   = "var.repository_name"
     container_port   = "80"
   }
 
