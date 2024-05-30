@@ -81,7 +81,7 @@ module "nginx_repository" {
 
   repository_name                 = "nginx-repository"
   repository_type                 = "private"
-  repository_image_tag_mutability = "IMMUTABLE"
+  repository_image_tag_mutability = "MUTABLE"
   create_lifecycle_policy         = true
 
   # 最新の3イメージのみを保持
