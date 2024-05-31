@@ -51,7 +51,7 @@ resource "aws_iam_role" "sample_iam_role" {
         Effect = "Allow"
         Sid    = ""
         Principal = {
-          Service = "ec2.amazonaws.com"
+          Service = "ecs-tasks.amazonaws.com"
         }
       },
     ]
