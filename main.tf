@@ -55,7 +55,7 @@ module "iam_role_github_actions" {
 module "subnet" {
   source = "./terraform/modules/subnet"
 
-  vpc_id = module.vpc.vpc_id
+  vpc_id = module.vpc.id
 }
 
 module "iam" {
@@ -67,10 +67,10 @@ module "ecs" {
 
   repository_name = var.repository_name
   repository_url  = module.nginx_repository.repository_url
-  iam_role_arn    = module.iam.sample_iam_role.arn
+  iam_role_arn    = module.iam.role.arn
   security_group_ids = [aws_security_group.sample_security_group.id]
   elb_target_group_arn = aws_lb_target_group.sample.arn
-  subnet_ids = [module.subnet.public1.id, module.subnet.public2.id]
+  subnet_ids = module.subnet.ids
 }
 
 module "vpc" {
@@ -78,14 +78,14 @@ module "vpc" {
 }
 
 resource "aws_internet_gateway" "internet_gateway" {
-  vpc_id = aws_vpc.sample.id
+  vpc_id = module.vpc.id
   tags = {
     Name = "internet_gateway"
   }
 }
 
 resource "aws_route_table" "alb_route_table" {
-  vpc_id = aws_vpc.sample.id
+  vpc_id = module.vpc.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.internet_gateway.id
@@ -99,18 +99,18 @@ resource "aws_route_table" "alb_route_table" {
 # }
 
 resource "aws_route_table_association" "alb_table_association_1a" {
-  subnet_id      = aws_subnet.public1.id
+  subnet_id      = module.subnet.public1.id
   route_table_id = aws_route_table.alb_route_table.id
 }
 
 resource "aws_route_table_association" "alb_table_association_1c" {
-  subnet_id      = aws_subnet.public2.id
+  subnet_id      = module.subnet.public2.id
   route_table_id = aws_route_table.alb_route_table.id
 }
 
 resource "aws_security_group" "sample_security_group" {
   name   = "ecs-security-group"
-  vpc_id = aws_vpc.sample.id
+  vpc_id = module.vpc.id
 
   ingress {
     from_port   = 0
@@ -133,7 +133,7 @@ resource "aws_lb_target_group" "sample" {
   name        = "nginx-lb"
   port        = 80
   protocol    = "HTTP"
-  vpc_id      = aws_vpc.sample.id
+  vpc_id      = module.vpc.id
   target_type = "ip"
 }
 
@@ -144,7 +144,7 @@ resource "aws_lb" "sample_lb" {
   load_balancer_type = "application"
   security_groups = [aws_security_group.sample_security_group.id]
 
-  subnets = [aws_subnet.public1.id, aws_subnet.public2.id]
+  subnets = module.subnet.ids
 }
 
 resource "aws_lb_listener" "test_listener" {

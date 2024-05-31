@@ -37,3 +37,7 @@ resource "aws_iam_role_policy" "sample_iam_role_policy" {
     ]
   })
 }
+
+output "role" {
+  value = aws_iam_role.sample_iam_role
+}

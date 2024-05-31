@@ -4,3 +4,7 @@ resource "aws_vpc" "sample" {
   enable_dns_hostnames = true
   instance_tenancy     = "default"
 }
+
+output "id" {
+  value = aws_vpc.sample.id
+}

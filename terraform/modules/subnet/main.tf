@@ -13,3 +13,15 @@ resource "aws_subnet" "public2" {
   map_public_ip_on_launch = false
   availability_zone       = "us-east-1b"
 }
+
+output "ids" {
+  value = [aws_subnet.public1.id, aws_subnet.public2.id]
+}
+
+output "public1" {
+  value = aws_subnet.public1
+}
+
+output "public2" {
+  value = aws_subnet.public2
+}
